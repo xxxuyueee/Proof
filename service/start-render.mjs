@@ -16,6 +16,11 @@ if (!env.PROOF_MCP_SECRET) {
   process.exit(1);
 }
 
+// Render supplies RENDER_EXTERNAL_URL; never derive public links from request headers.
+if (!env.PROOF_PUBLIC_DRINK_URL && env.RENDER_EXTERNAL_URL) {
+  env.PROOF_PUBLIC_DRINK_URL = new URL('/proof/drink/', env.RENDER_EXTERNAL_URL).href;
+}
+
 const service = spawn(process.execPath, ['server.mjs'], {
   env,
   stdio: 'inherit'

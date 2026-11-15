@@ -1,5 +1,6 @@
 
 import http from 'node:http';
+import { createWebHandler } from './web-http.mjs';
 import { spawn } from 'node:child_process';
 import { timingSafeEqual } from 'node:crypto';
 
@@ -122,7 +123,10 @@ function json(res, status, body) {
   res.end(JSON.stringify(body));
 }
 
+const handleWeb = createWebHandler();
+
 const server = http.createServer(async (req, res) => {
+  if (await handleWeb(req, res)) return;
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS, GET');
   res.setHeader(
