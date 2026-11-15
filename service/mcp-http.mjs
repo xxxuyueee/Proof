@@ -64,6 +64,18 @@ const server = http.createServer(async (req, res) => {
     return res.end();
   }
 
+  const expectedKey = process.env.PROOF_MCP_SECRET;
+
+  if (!expectedKey) {
+    res.writeHead(503);
+    return res.end('MCP authentication not configured');
+  }
+
+  if (req.headers.authorization !== `Bearer ${expectedKey}`) {
+    res.writeHead(401);
+    return res.end('Unauthorized');
+  }
+
   if (req.url !== '/mcp' || req.method !== 'POST') {
     res.writeHead(404);
     return res.end();
